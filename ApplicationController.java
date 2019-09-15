@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.paint.Color;
 
 public class ApplicationController {
 	
@@ -106,6 +107,15 @@ public class ApplicationController {
 	@FXML
 	private Label label_stata_vl_3_5;
 	
+	//Execution time label for stat
+	@FXML
+	private Label label_time_1;
+	@FXML
+	private Label label_time_2;
+	@FXML
+	private Label label_time_3;
+	
+	
 	//progress bars components
 	@FXML 
 	private ProgressBar progress_sort_1;
@@ -116,7 +126,7 @@ public class ApplicationController {
 	
 	private int[] orig_array;
 	
-	private final int length = 20;
+	private final int length = 100000;
 	
 	//constructor
 	public ApplicationController() {
@@ -134,26 +144,36 @@ public class ApplicationController {
 		
 		label_org_text.setText("Original Array:");
 		label_sort_1.setText("HEAP SORT: \tExec Time:");
+		label_sort_1.setTextFill(Color.web("#ff0000", 0.8));
 		label_sort_2.setText("BST SORT: \tExec Time:");
+		label_sort_2.setTextFill(Color.web("#ff0000", 0.8));
 		label_sort_3.setText("INSERTION SORT: \tExec Time:");
+		label_sort_3.setTextFill(Color.web("#ff0000", 0.8));
 		
 		label_stata_1_1.setText("Summatory:");
 		label_stata_1_2.setText("Mean:");
 		label_stata_1_3.setText("Median:");
 		label_stata_1_4.setText("Standard Desviation:");
 		label_stata_1_5.setText("Quartiles:");
+		label_time_1.setText("Stat Exec time:");
 
 		label_stata_2_1.setText("Summatory:");
 		label_stata_2_2.setText("Mean:");
 		label_stata_2_3.setText("Median:");
 		label_stata_2_4.setText("Standard Desviation:");
 		label_stata_2_5.setText("Quartiles:");
+		label_time_2.setText("Stat Exec time:");
 		
 		label_stata_3_1.setText("Summatory:");
 		label_stata_3_2.setText("Mean:");
 		label_stata_3_3.setText("Median:");
 		label_stata_3_4.setText("Standard Desviation:");
 		label_stata_3_5.setText("Quartiles:");
+		label_time_3.setText("Stat Exec time:");
+		
+		label_time_1.setTextFill(Color.web("#ff0000", 0.8));
+		label_time_2.setTextFill(Color.web("#ff0000", 0.8));
+		label_time_3.setTextFill(Color.web("#ff0000", 0.8));
 		
 		label_org_array.setText(Arrays.toString(ArrayGenerator.getResumeArray(orig_array)));
 		
@@ -187,8 +207,9 @@ public class ApplicationController {
 			arrays_sort[2] = sort_task_3.getValue();
 			
 			label_3_array.setText(Arrays.toString(ArrayGenerator.getResumeArray(arrays_sort[2])));
+			label_sort_3.setText(label_sort_3.getText().concat(" " + Long.toString(sort_task_3.getExecutionTime()) + " mili seconds"));
 			
-			//create the next thread for statistics 
+			//create the next thread for statistics with a sorted array
 			stat_task[2].setArray(arrays_sort[2]);
 			threadExecutor.execute(stat_task[2]);
 			
@@ -201,6 +222,8 @@ public class ApplicationController {
 			label_stata_vl_3_1.setText(Double.toString(stat_task[2].getValue()[0]));
 			label_stata_vl_3_2.setText(Double.toString(stat_task[2].getValue()[1]));
 			label_stata_vl_3_3.setText(Double.toString(stat_task[2].getValue()[2]));
+			
+			label_time_3.setText(label_time_3.getText().concat(" " + Long.toString(stat_task[2].getExecutionTime()) + " mili seconds"));
 			
 		});
 		

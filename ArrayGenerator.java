@@ -10,7 +10,7 @@ public class ArrayGenerator {
 		
 		SecureRandom rand = new SecureRandom();
 		
-		int array_random[] = rand.ints(lenght, 0, 100).toArray();
+		int array_random[] = rand.ints(lenght, 0, 100000).toArray();
 		
 		return array_random;
 		

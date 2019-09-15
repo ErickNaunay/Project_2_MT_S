@@ -1,10 +1,14 @@
 package application;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import javafx.concurrent.Task;
 
 public class InsertionSort extends Task<int[]>{
 	
 	private int[] array_to_sort;
+	private long exec_time;
 	
 	public InsertionSort(int[] array_to_sort) {
 		this.array_to_sort = array_to_sort.clone();
@@ -18,6 +22,8 @@ public class InsertionSort extends Task<int[]>{
 	}
 	
 	private int[] insertionAlgorithm() {
+		
+		Instant begin_exec = Instant.now();
 		
 		int[] data = array_to_sort.clone();
 		
@@ -45,7 +51,20 @@ public class InsertionSort extends Task<int[]>{
 	         
 	         data[moveItem] = insert; // place inserted element    
 	      }                                             
-		
+	      
+	      Instant end_exec = Instant.now();
+	      setExecutionTime(begin_exec, end_exec);
+	      
 	      return data;
+	}
+	
+	private void setExecutionTime(Instant init, Instant end) {
+		
+		exec_time = Duration.between(init, end).toMillis();
+		
+	}
+	
+	public long getExecutionTime() {
+		return exec_time;
 	}
 }

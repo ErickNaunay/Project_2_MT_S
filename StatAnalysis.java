@@ -1,5 +1,7 @@
 package application;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 
 import javafx.concurrent.Task;
@@ -8,9 +10,12 @@ import javafx.concurrent.Task;
 public class StatAnalysis extends Task<double[]>{
 	
 	private int[] array_to_analyze;
+	private long exec_time;
 	
 	@Override
 	protected double[] call() {
+		
+		Instant begin_exec = Instant.now();
 		
 		double results[] = new double[7];
 		
@@ -20,6 +25,10 @@ public class StatAnalysis extends Task<double[]>{
 		results[2] = getMedian();
 		
 		//INSERT STAT FUNCITIONS
+		
+		
+	    Instant end_exec = Instant.now();
+	    setExecutionTime(begin_exec, end_exec);
 		
 		return results;
 	}
@@ -46,6 +55,14 @@ public class StatAnalysis extends Task<double[]>{
 		this.array_to_analyze = is.clone();
 	}
 	
+	private void setExecutionTime(Instant init, Instant end) {
+		
+		exec_time = Duration.between(init, end).toMillis();
+		
+	}
 	
+	public long getExecutionTime() {
+		return exec_time;
+	}
 
 }
