@@ -7,7 +7,6 @@ public class InsertionSort extends Task<int[]>{
 	private int[] array_to_sort;
 	
 	public InsertionSort(int[] array_to_sort) {
-		//super(array_to_sort);
 		this.array_to_sort = array_to_sort.clone();
 	}
 	
@@ -30,13 +29,19 @@ public class InsertionSort extends Task<int[]>{
 
 	         // search for place to put current element         
 	         while (moveItem > 0 && data[moveItem - 1] > insert) {
-	            // shift element right one slot                   
-	        	 data[moveItem] = data[moveItem - 1];              
+	            // shift element right one slot
+	        	 
+	        	 data[moveItem] = data[moveItem - 1];
+
 	            moveItem--;                                       
 	         }                                                    
 	         
 	         //update the progressbar value
 	         updateProgress(next, data.length);
+	         
+	         //print debuggin data from the algorithm
+	         if (next%1000 == 0)
+	        	 System.out.printf("INSERTION SORT: insert [%d] in position %d\n", insert, moveItem);
 	         
 	         data[moveItem] = insert; // place inserted element    
 	      }                                             

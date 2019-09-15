@@ -38,6 +38,9 @@ public class ApplicationController {
 	//statistics labels
 	
 	@FXML
+	private Label label_stata_1[][] = new Label[5][2];
+	
+	@FXML
 	private Label label_stata_1_1;
 	@FXML
 	private Label label_stata_1_2;
@@ -113,7 +116,7 @@ public class ApplicationController {
 	
 	private int[] orig_array;
 	
-	private final int length = 100000;
+	private final int length = 20;
 	
 	//constructor
 	public ApplicationController() {
@@ -160,32 +163,51 @@ public class ApplicationController {
 	@FXML
 	public void getSortedButtonPressed(ActionEvent e) {
 		
+		//create thread executor pool, 3 threads created
+		ExecutorService threadExecutor = Executors.newFixedThreadPool(3);
+		
 		//array that storages all sorted arrays by different algorithms
 		int [][] arrays_sort = new int[3][];
 		
 		//create sorting tasks
-		//SortAlgorithms [] sort_tasks = new SortAlgorithms[3];
-		InsertionSort sort_task_1 = new InsertionSort(orig_array);
+		InsertionSort sort_task_3 = new InsertionSort(orig_array);
+		
+		//create stat tasks
+		StatAnalysis stat_task[] = new StatAnalysis[3];
+		stat_task[0] = new StatAnalysis();
+		stat_task[1] = new StatAnalysis();
+		stat_task[2] = new StatAnalysis();
 		
 		//get values and update labels while the task is running or has finished
-		progress_sort_3.progressProperty().bind(sort_task_1.progressProperty());
+		progress_sort_3.progressProperty().bind(sort_task_3.progressProperty());
 		
-		sort_task_1.setOnSucceeded(succedEvent -> {
+		//when the sort thread is completed
+		sort_task_3.setOnSucceeded(succedEvent -> {
 			
-			arrays_sort[2] = sort_task_1.getValue();
+			arrays_sort[2] = sort_task_3.getValue();
 			
 			label_3_array.setText(Arrays.toString(ArrayGenerator.getResumeArray(arrays_sort[2])));
 			
+			//create the next thread for statistics 
+			stat_task[2].setArray(arrays_sort[2]);
+			threadExecutor.execute(stat_task[2]);
+			
 		});
 		
+		//INSERT stat_task[0], [1] setOnSuceeded
 		
-		//create thread excetutor, 3 threads created
-		ExecutorService threadExecutor = Executors.newFixedThreadPool(3);
+		stat_task[2].setOnSucceeded(event -> {
+			
+			label_stata_vl_3_1.setText(Double.toString(stat_task[2].getValue()[0]));
+			label_stata_vl_3_2.setText(Double.toString(stat_task[2].getValue()[1]));
+			label_stata_vl_3_3.setText(Double.toString(stat_task[2].getValue()[2]));
+			
+		});
 		
 		//execute tasks
-		threadExecutor.execute(sort_task_1);
+		threadExecutor.execute(sort_task_3);
 		
-		threadExecutor.shutdown();
+		//threadExecutor.shutdown();
 		
 	}
 	
