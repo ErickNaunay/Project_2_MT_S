@@ -1,5 +1,3 @@
-package application;
-
 import java.security.SecureRandom;
 import java.util.stream.IntStream;
 

@@ -1,5 +1,3 @@
-package application;
-
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -190,6 +188,8 @@ public class ApplicationController {
 		int [][] arrays_sort = new int[3][];
 		
 		//create sorting tasks
+		MergeSort sort_task_1 = new MergeSort(orig_array);
+		BST sort_task_2 = new BST(orig_array);
 		InsertionSort sort_task_3 = new InsertionSort(orig_array);
 		
 		//create stat tasks
@@ -199,9 +199,37 @@ public class ApplicationController {
 		stat_task[2] = new StatAnalysis();
 		
 		//get values and update labels while the task is running or has finished
+		progress_sort_1.progressProperty().bind(sort_task_1.progressProperty());
+		progress_sort_2.progressProperty().bind(sort_task_2.progressProperty());
 		progress_sort_3.progressProperty().bind(sort_task_3.progressProperty());
 		
 		//when the sort thread is completed
+		sort_task_1.setOnSucceeded(succedEvent -> {
+			
+			arrays_sort[0] = sort_task_1.getValue();
+			
+			label_1_array.setText(Arrays.toString(ArrayGenerator.getResumeArray(arrays_sort[0])));
+			label_sort_1.setText(label_sort_1.getText().concat(" " + Long.toString(sort_task_1.getExecutionTime()) + " mili seconds"));
+			
+			//create the next thread for statistics with a sorted array
+			stat_task[0].setArray(arrays_sort[0]);
+			threadExecutor.execute(stat_task[0]);
+			
+		});
+		
+		sort_task_2.setOnSucceeded(succedEvent -> {
+			
+			arrays_sort[1] = sort_task_2.getValue();
+			
+			label_2_array.setText(Arrays.toString(ArrayGenerator.getResumeArray(arrays_sort[1])));
+			label_sort_2.setText(label_sort_3.getText().concat(" " + Long.toString(sort_task_2.getExecutionTime()) + " mili seconds"));
+			
+			//create the next thread for statistics with a sorted array
+			stat_task[1].setArray(arrays_sort[1]);
+			threadExecutor.execute(stat_task[1]);
+			
+		});
+
 		sort_task_3.setOnSucceeded(succedEvent -> {
 			
 			arrays_sort[2] = sort_task_3.getValue();
@@ -215,20 +243,57 @@ public class ApplicationController {
 			
 		});
 		
-		//INSERT stat_task[0], [1] setOnSuceeded
+		//INSERT stat_task[0], [1] [2] setOnSuceeded
+		
+		stat_task[0].setOnSucceeded(event -> {
+			
+			label_stata_vl_1_1.setText(Double.toString(stat_task[0].getValue()[0]));
+			label_stata_vl_1_2.setText(Double.toString(stat_task[0].getValue()[1]));
+			label_stata_vl_1_3.setText(Double.toString(stat_task[0].getValue()[2]));
+			label_stata_vl_1_4.setText(Double.toString(stat_task[0].getValue()[3]));
+			label_stata_vl_1_5.setText("25%: "+ Double.toString(stat_task[0].getValue()[4]) +
+										"\t50%: " + Double.toString(stat_task[0].getValue()[5]) +
+										"\t75%: " + Double.toString(stat_task[0].getValue()[6]));
+			
+			label_time_1.setText(label_time_1.getText().concat(" " + Long.toString(stat_task[0].getExecutionTime()) + " mili seconds"));
+			
+		});
+		
+		stat_task[1].setOnSucceeded(event -> {
+			
+			label_stata_vl_2_1.setText(Double.toString(stat_task[1].getValue()[0]));
+			label_stata_vl_2_2.setText(Double.toString(stat_task[1].getValue()[1]));
+			label_stata_vl_2_3.setText(Double.toString(stat_task[1].getValue()[2]));
+			label_stata_vl_2_4.setText(Double.toString(stat_task[1].getValue()[3]));
+			
+			label_stata_vl_2_5.setText("25%: "+ Double.toString(stat_task[1].getValue()[4]) +
+										"\t50%: " + Double.toString(stat_task[1].getValue()[5]) +
+										"\t75%: " + Double.toString(stat_task[1].getValue()[6]));
+			
+			label_time_2.setText(label_time_2.getText().concat(" " + Long.toString(stat_task[1].getExecutionTime()) + " mili seconds"));
+			
+		});
 		
 		stat_task[2].setOnSucceeded(event -> {
 			
 			label_stata_vl_3_1.setText(Double.toString(stat_task[2].getValue()[0]));
 			label_stata_vl_3_2.setText(Double.toString(stat_task[2].getValue()[1]));
 			label_stata_vl_3_3.setText(Double.toString(stat_task[2].getValue()[2]));
+			label_stata_vl_3_4.setText(Double.toString(stat_task[2].getValue()[3]));
+			
+			label_stata_vl_3_5.setText("25%: "+ Double.toString(stat_task[2].getValue()[4]) +
+										"\t50%: " + Double.toString(stat_task[2].getValue()[5]) +
+										"\t75%: " + Double.toString(stat_task[2].getValue()[6]));
 			
 			label_time_3.setText(label_time_3.getText().concat(" " + Long.toString(stat_task[2].getExecutionTime()) + " mili seconds"));
 			
 		});
 		
 		//execute tasks
+		threadExecutor.execute(sort_task_1);
+		threadExecutor.execute(sort_task_2);
 		threadExecutor.execute(sort_task_3);
+		
 		
 		//threadExecutor.shutdown();
 		
